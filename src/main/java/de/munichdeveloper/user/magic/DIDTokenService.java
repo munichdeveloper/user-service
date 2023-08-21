@@ -1,6 +1,8 @@
 package de.munichdeveloper.user.magic;
 
 import com.google.gson.Gson;
+import de.munichdeveloper.user.exception.IncorrectSignerException;
+import de.munichdeveloper.user.exception.MalformedTokenException;
 import org.json.JSONArray;
 
 import java.time.Instant;
@@ -46,10 +48,6 @@ public class DIDTokenService {
         validateClaim(claimedIssuer, parsedDIDToken);
         validateEXT(Instant.ofEpochSecond(expiredAt), now);
         validateNBF(Instant.ofEpochSecond(notBefore), now);
-    }
-
-    public static String getIssuerFromPublicAddress(String publicAddress) {
-        return "did:eth:" + publicAddress;
     }
 
     private static void validateClaim(String claimedIssuer, ParsedDIDToken parsedDIDToken) throws IncorrectSignerException {

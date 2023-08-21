@@ -1,11 +1,11 @@
 package de.munichdeveloper.user.service;
 
-
 import de.munichdeveloper.user.domain.User;
 import de.munichdeveloper.user.dto.JwtAuthenticationResponse;
 import de.munichdeveloper.user.dto.SignUpRequest;
 import de.munichdeveloper.user.dto.SigninRequest;
 import de.munichdeveloper.user.enums.Role;
+import de.munichdeveloper.user.exception.FeatureNotEnabledException;
 import de.munichdeveloper.user.magic.DIDToken;
 import de.munichdeveloper.user.magic.DIDTokenService;
 import de.munichdeveloper.user.magic.DIDUserService;
@@ -14,6 +14,8 @@ import de.munichdeveloper.user.repository.MagicLinkRepository;
 import de.munichdeveloper.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -41,8 +43,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private DIDUserService didUserService;
 
+    @Autowired
+    private KafkaTemplate<Object, Object> kafkaTemplate;
+
+    @Value("${enable.magic.link}")
+    private boolean enableMagicLink;
+
+    @Value("${enable.signin.withUserAndPassword}")
+    private boolean enableSigninWithUserAndPassword;
+
+    @Value("${enable.signup.withUserAndPassword}")
+    private boolean enableSignupWithUserAndPassword;
+
     @Override
     public JwtAuthenticationResponse signup(SignUpRequest request) throws Exception {
+        if (!enableSignupWithUserAndPassword) {
+            throw new FeatureNotEnabledException("This feature is currently disabled. You can set 'enable.signup.withUserAndPassword' to 'true' to enable it.");
+        }
         Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
         if (userOptional.isPresent()) {
             // user already exists!
@@ -63,6 +80,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtAuthenticationResponse signin(SigninRequest request) throws Exception {
+        if (!enableSigninWithUserAndPassword) {
+            throw new FeatureNotEnabledException("This feature is currently disabled. You can set 'enable.signin.withUserAndPassword' to 'true' to enable it.");
+        }
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         } catch (AuthenticationException authenticationException) {
@@ -75,10 +95,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public JwtAuthenticationResponse signinByMagicLink(String didToken) throws IOException, InterruptedException {
+        // Check if a signin through magic link is enabled
+        if (!enableMagicLink) {
+            throw new FeatureNotEnabledException("This feature is currently disabled. You can set 'enable.magic.link' to 'true' to enable it.");
+        }
         DIDToken parsedDIDToken = DIDTokenService.parseAndValidateToken(didToken);
         String issuer = parsedDIDToken.getIssuer();
         UserMetadata metadataByIssuer = didUserService.getMetadataByIssuer(issuer);
-        String jwt = jwtService.generateToken(metadataByIssuer.getData().getEmail());
+        String email = metadataByIssuer.getData().getEmail();
+
+        this.kafkaTemplate.send("user-signin-magic-link", email);
+
+        String jwt = jwtService.generateToken(email);
         return JwtAuthenticationResponse.builder().token(jwt).build();
     }
 

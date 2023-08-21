@@ -4,6 +4,7 @@ import de.munichdeveloper.user.domain.User;
 import de.munichdeveloper.user.enums.Role;
 import de.munichdeveloper.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private KafkaTemplate<Object, Object> kafkaTemplate;
+
     @Override
     public UserDetails loadUserByUsername(String username) {
         Optional<User> user = userRepository.findByEmail(username);
@@ -26,7 +30,9 @@ public class MyUserDetailsService implements UserDetailsService {
                     .email(username)
                     .role(Role.USER)
                     .build();
-            return userRepository.save(newUser);
+            User savedUser = userRepository.save(newUser);
+            this.kafkaTemplate.send("user-created", savedUser.getEmail());
+            return savedUser;
         }
         return user.get();
     }
