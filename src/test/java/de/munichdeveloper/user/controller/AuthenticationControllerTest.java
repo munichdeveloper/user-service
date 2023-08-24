@@ -7,7 +7,7 @@ import static org.mockito.Mockito.*;
 import de.munichdeveloper.user.dto.JwtAuthenticationResponse;
 import de.munichdeveloper.user.dto.SignUpRequest;
 import de.munichdeveloper.user.dto.SigninRequest;
-import de.munichdeveloper.user.dto.SigninWithDIDRequest;
+import de.munichdeveloper.magic.dto.SigninWithDIDRequest;
 import de.munichdeveloper.user.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,17 +53,4 @@ public class AuthenticationControllerTest {
         assertEquals(response, result.getBody());
     }
 
-    @Test
-    void testSigninByMagicToken() throws Exception {
-        SigninWithDIDRequest signinWithDIDRequest = new SigninWithDIDRequest("did");
-        JwtAuthenticationResponse response = new JwtAuthenticationResponse("token");
-
-        when(authenticationService.signinByMagicLink(signinWithDIDRequest.getDid())).thenReturn(response);
-
-        ResponseEntity<JwtAuthenticationResponse> result = authenticationController.signinByMagicToken(signinWithDIDRequest);
-
-        verify(authenticationService).signinByMagicLink(signinWithDIDRequest.getDid());
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(response, result.getBody());
-    }
 }

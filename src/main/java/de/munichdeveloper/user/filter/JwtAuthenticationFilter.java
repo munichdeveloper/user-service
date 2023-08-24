@@ -1,7 +1,7 @@
 package de.munichdeveloper.user.filter;
 
 import de.munichdeveloper.user.service.JwtService;
-import de.munichdeveloper.user.service.MyUserDetailsService;
+import de.munichdeveloper.user.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtService jwtService;
     @Autowired
-    private MyUserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
