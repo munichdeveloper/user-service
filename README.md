@@ -29,10 +29,11 @@ When implemented, the workflow looks as follows:
 
 You can checkout the boilerplate / reference projects that demonstrate the whole workflow. The projects are realized with Spring Boot 3 and React 18.
 Checkout the Spring Boot project [here](#) and the React project [here](#).
+Also you can see the auth live in action in a demo app [here](https://documan.onrender.com).
 
 # Benefits of a magic.link auth
 
-The described workflow has a lot of advantages and offers a great user experience.
+The described workflow has a lot of advantages and offers a great user experience:
 
 1. Your users don't have to deal with finding and reconing complex passwords, which often times only results in people just writing their passwords to unsecure places.
 2. You don't have to deal with fake registrations or verifying if the email adress provided is valid.
