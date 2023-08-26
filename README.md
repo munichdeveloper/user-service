@@ -34,7 +34,7 @@ When implemented, the workflow looks as follows:
 # Reference implementations
 
 You can checkout the boilerplate / reference projects that demonstrate the whole workflow. The projects are realized with Spring Boot 3 and React 18.
-Checkout the Spring Boot project [here](#) and the React project [here](https://github.com/munichdeveloper/documan-journal-react-fe/).
+Checkout the Spring Boot project [here](https://github.com/munichdeveloper/spring-boot-magic-link) and the React project [here](https://github.com/munichdeveloper/documan-journal-react-fe/).
 <br />Also you can see the auth live in action in a demo app [here](https://documan.onrender.com).
 
 # Benefits of a magic.link auth
