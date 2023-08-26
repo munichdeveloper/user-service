@@ -4,7 +4,6 @@ import de.munichdeveloper.magic.dto.SigninWithDIDRequest;
 import de.munichdeveloper.magic.service.MagicService;
 import de.munichdeveloper.user.dto.JwtAuthenticationResponse;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

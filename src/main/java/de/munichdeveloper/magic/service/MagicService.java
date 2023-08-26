@@ -21,13 +21,11 @@ import java.net.http.HttpResponse;
 @Service
 public class MagicService {
 
+    @Autowired
     private KafkaTemplate<Object, Object> kafkaTemplate;
 
     @Autowired
     private JwtService jwtService;
-
-    @Autowired
-    private MagicService magicService;
 
     @Value("${enable.magic.link}")
     private boolean enableMagicLink;
@@ -60,7 +58,7 @@ public class MagicService {
         }
         DIDToken parsedDIDToken = DIDTokenHelper.parseAndValidateToken(didToken);
         String issuer = parsedDIDToken.getIssuer();
-        UserMetadata metadataByIssuer = magicService.getMetadataByIssuer(issuer);
+        UserMetadata metadataByIssuer = getMetadataByIssuer(issuer);
         String email = metadataByIssuer.getData().getEmail();
 
         this.kafkaTemplate.send("user-signin-magic-link", email);
