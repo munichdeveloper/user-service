@@ -59,4 +59,5 @@ There are two kafka topics that are sending a message when a user signs in with 
 - When a user gets registered: "user-created" 
 - When a user logs in: "user-signin-magic-link"
 
-  Also checkout the reference implementation, that will add users to a mailerlite group that you have configured (You will need a [mailerLite](https://mailerlite.com) account)
+  You will just need to listen to these topics and do whatever you want with the emails provided.
+  <br />Checkout the reference implementation, that will listen to the topics and add users to a mailerlite group that is being configured in application.properties file (You will need a [mailerLite](https://mailerlite.com) account)
