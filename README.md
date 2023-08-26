@@ -25,6 +25,12 @@ When implemented, the workflow looks as follows:
 6. This DIDT then should be propagated to your backend. Your backend should verify the DID Token is valid (through calling the magic.link API) and the issuer is the expected email adress.
 7. When validated, your backend can issue a JWT and handle it in the response header to your frontend. The user is now authenticated with his email.
 
+# What do you need?
+
+- You will need a [magic.link](https://magic.link) account that can be obtained for free.
+- You need to implement your own frontend and backend logic (and integrate this library here into your backend). Also checkout the reference implementations (see links down below).
+- Optional: If you would like to add users to e.g. mailerLite: a mailerLite account (see description down below).
+
 # Reference implementations
 
 You can checkout the boilerplate / reference projects that demonstrate the whole workflow. The projects are realized with Spring Boot 3 and React 18.
@@ -39,8 +45,18 @@ The described workflow has a lot of advantages and offers a great user experienc
 2. You don't have to deal with fake registrations or verifying if the email adress provided is valid.
 3. You get a TFA out of the box, which adds additional layer of security.
 4. You don't need users to register explicitly. In the example implementation, a new user is registered automatically, if it doesn't exist yet. However, this is of course dependant on your projects requirements.
+5. You don't need to deal with 'forgot password' functionality and your users don't have to deal with that also. They can always login, as long as they have access to their email (they always do).
+6. You don't need to setup infrastructure for sending emails.
 
 # Is this really secure? What if the email account of my user is being hacked?
 
 Yes, this is very secure. However, there is nothing that cannot be hacked / compromised. 
 Also please consider, if your users email account gets hacked, a new password can easily be obtained at the most applications / websites through the 'forgot password' functionality.
+
+# Features
+
+There are two kafka topics that are sending a message when a user signs in with his email adress:
+- When a user gets registered: "user-created" 
+- When a user logs in: "user-signin-magic-link"
+
+  Also checkout the reference implementation, that will add users to a mailerlite group that you have configured (You will need a [mailerLite](https://mailerlite.com) account)
