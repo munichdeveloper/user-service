@@ -33,9 +33,11 @@ When implemented, the workflow looks as follows:
 
 # Reference implementations
 
-You can checkout the boilerplate / reference projects that demonstrate the whole workflow. The projects are realized with Spring Boot 3 and React 18.
-<br />Checkout the Spring Boot project [here](https://github.com/munichdeveloper/spring-boot-magic-link) and the React project [here](https://github.com/munichdeveloper/documan-journal-react-fe/).
+You can checkout the boilerplate projects / reference implementations that demonstrate the whole workflow. The projects are realized with Spring Boot 3 and React 18:
+<br />Checkout the Spring Boot project [here](https://github.com/munichdeveloper/spring-boot-magic-link) and the React project [here](https://github.com/munichdeveloper/react-magic-link).
+<br />Please note: These projects are not "production ready" and are just illustrating the basic usage.
 <br />Also you can see the auth live in action in a demo app [here](https://documan.onrender.com).
+
 
 # Benefits of a magic.link auth
 
@@ -47,6 +49,7 @@ The described workflow has a lot of advantages and offers a great user experienc
 4. You don't need users to register explicitly. In the example implementation, a new user is registered automatically, if it doesn't exist yet. However, this is of course dependant on your projects requirements.
 5. You don't need to deal with 'forgot password' functionality and your users don't have to deal with that also. They can always login, as long as they have access to their email (they always do).
 6. You don't need to setup infrastructure for sending emails.
+7. You can collect user mails without hassle.
 
 # Is this really secure? What if the email account of my user is being hacked?
 
@@ -60,4 +63,6 @@ There are two kafka topics that are sending a message when a user signs in with 
 - When a user logs in: "user-signin-magic-link"
 
   You will just need to listen to these topics and do whatever you want with the emails provided.
-  <br />Checkout the reference implementation, that will listen to the topics and add users to a mailerlite group that is being configured in application.properties file (You will need a [mailerLite](https://mailerlite.com) account)
+  <br />Checkout the reference implementation, that will listen to the topics and add users to a mailerlite group that is being configured in application.properties file (You will need a [mailerLite](https://mailerlite.com) account).
+  <br />Don't forget to set event.on.userCreated or event.on.userLoggedIn or both to true if you would like to send the events.
+
