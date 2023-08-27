@@ -33,6 +33,9 @@ public class MagicService {
     @Value("${magic.api.key}")
     private String magicApiKey;
 
+    @Value("${event.on.userLoggedIn}")
+    private boolean eventOnUserLoggedIn;
+
     private final static String BASE_URL = "https://api.magic.link";
     private final static String V1_USER_INFO = "/v1/admin/auth/user/get";
     private final static String V2_USER_LOGOUT = "/v2/admin/auth/user/logout";
@@ -61,7 +64,9 @@ public class MagicService {
         UserMetadata metadataByIssuer = getMetadataByIssuer(issuer);
         String email = metadataByIssuer.getData().getEmail();
 
-        this.kafkaTemplate.send("user-signin-magic-link", email);
+        if (eventOnUserLoggedIn) {
+            this.kafkaTemplate.send("user-signin-magic-link", email);
+        }
 
         String jwt = jwtService.generateToken(email);
         return JwtAuthenticationResponse.builder().token(jwt).build();
