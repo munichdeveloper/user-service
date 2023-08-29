@@ -43,7 +43,7 @@ You can checkout the boilerplate projects / reference implementations that demon
 
 The described workflow has a lot of advantages and offers a great user experience:
 
-1. Your users don't have to deal with finding and reconing complex passwords, which often times only results in people just writing their passwords to unsecure places.
+1. Your users don't have to deal with finding and remembering complex passwords, which often times only results in people just writing their passwords to unsecure places.
 2. You don't have to deal with fake registrations or verifying if the email adress provided is valid.
 3. You get a TFA out of the box, which adds additional layer of security.
 4. You don't need users to register explicitly. In the example implementation, a new user is registered automatically, if it doesn't exist yet. However, this is of course dependant on your projects requirements.
