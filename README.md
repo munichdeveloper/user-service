@@ -58,11 +58,11 @@ Also please consider, if your users email account gets hacked, a new password ca
 
 # Features
 
-There are two kafka topics that are sending a message when a user signs in with his email adress:
-- When a user gets registered: "user-created" 
-- When a user logs in: "user-signin-magic-link"
+There are two Events being send when a user signs in with his email adress:
+- When a user gets registered: UserCreatedEvent
+- When a user logs in: UserLoggedInEvent
 
-  You will just need to listen to these topics and do whatever you want with the emails provided.
-  <br />Checkout the reference implementation, that will listen to the topics and add users to a mailerlite group that is being configured in application.properties file (You will need a [mailerLite](https://mailerlite.com) account).
+  You will just need to listen to these Events and do whatever you want with the emails provided.
+  <br />Checkout the reference implementation, that will listen to the Events and add users to a mailerlite group that is being configured in application.properties file (You will need a [mailerLite](https://mailerlite.com) account).
   <br />Don't forget to set event.on.userCreated or event.on.userLoggedIn or both to true if you would like to send the events.
 

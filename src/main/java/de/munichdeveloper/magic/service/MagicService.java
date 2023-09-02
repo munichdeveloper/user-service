@@ -5,11 +5,12 @@ import de.munichdeveloper.magic.dto.DIDToken;
 import de.munichdeveloper.magic.dto.UserMetadata;
 import de.munichdeveloper.magic.lib.DIDTokenHelper;
 import de.munichdeveloper.user.dto.JwtAuthenticationResponse;
+import de.munichdeveloper.user.events.UserLoggedInEvent;
 import de.munichdeveloper.user.exception.FeatureNotEnabledException;
 import de.munichdeveloper.user.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,10 +23,10 @@ import java.net.http.HttpResponse;
 public class MagicService {
 
     @Autowired
-    private KafkaTemplate<Object, Object> kafkaTemplate;
+    private JwtService jwtService;
 
     @Autowired
-    private JwtService jwtService;
+    private ApplicationEventPublisher publisher;
 
     @Value("${enable.magic.link}")
     private boolean enableMagicLink;
@@ -65,7 +66,7 @@ public class MagicService {
         String email = metadataByIssuer.getData().getEmail();
 
         if (eventOnUserLoggedIn) {
-            this.kafkaTemplate.send("user-signin-magic-link", email);
+            this.publisher.publishEvent(UserLoggedInEvent.builder().email(email).build());
         }
 
         String jwt = jwtService.generateToken(email);

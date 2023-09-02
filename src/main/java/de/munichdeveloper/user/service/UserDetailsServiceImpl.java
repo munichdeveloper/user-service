@@ -2,10 +2,12 @@ package de.munichdeveloper.user.service;
 
 import de.munichdeveloper.user.domain.User;
 import de.munichdeveloper.user.enums.Role;
+import de.munichdeveloper.user.events.UserCreatedEvent;
 import de.munichdeveloper.user.repository.UserRepository;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
     @Autowired
-    private KafkaTemplate<Object, Object> kafkaTemplate;
+    private ApplicationEventPublisher publisher;
 
     @Value("${event.on.userCreated}")
     private boolean eventOnUserCreated;
@@ -29,17 +31,29 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<User> user = userRepository.findByEmail(username);
         if (user.isEmpty()) {
             // user not registered yet.. let's simply create him!
-            var newUser = User
-                    .builder()
-                    .email(username)
-                    .role(Role.USER)
-                    .build();
-            User savedUser = userRepository.save(newUser);
-            if (eventOnUserCreated) {
-                this.kafkaTemplate.send("user-created", savedUser.getEmail());
-            }
+            User savedUser = createUser(username);
+            processUserCreated(savedUser);
             return savedUser;
         }
         return user.get();
+    }
+
+    private void processUserCreated(User savedUser) {
+        if (eventOnUserCreated) {
+            this.publisher.publishEvent(UserCreatedEvent
+                    .builder()
+                    .email(savedUser.getEmail())
+                    .build());
+        }
+    }
+
+    @NotNull
+    private User createUser(String username) {
+        var newUser = User
+                .builder()
+                .email(username)
+                .role(Role.USER)
+                .build();
+        return userRepository.save(newUser);
     }
 }
